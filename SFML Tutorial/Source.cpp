@@ -11,12 +11,12 @@ void swap(int* a, int* b);
 void selectionSort();
 void insertionSort();
 void merge(int p, int q, int r);
+int  partition(int p, int q);
 void mergeSort(int start, int end);
-int partition(int p, int q);
 void quickSort(int p, int q);
 void heapify(int n, int i);
 void heapSort(int n);
-void bubbleSort();
+//void bubbleSort();
 
 // Global Variables
 sf::RenderWindow viewport(sf::VideoMode(1200, 600), "Sorting Algorithm Visualizer");
@@ -83,10 +83,10 @@ int main()
                 sorted = true;
             }
 
-            // Runs quick sort
+            // Runs heap sort
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
                 shuffle();
-                selectionSort(); 
+                heapSort(100); 
                 display(0); 
                 sorted = true;
             }
