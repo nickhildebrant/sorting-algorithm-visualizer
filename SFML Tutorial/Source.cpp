@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <time.h>
 #include <chrono>
 #include <thread>
@@ -19,11 +20,25 @@ void bubbleSort();
 
 // Global Variables
 sf::RenderWindow viewport(sf::VideoMode(1200, 600), "Sorting Algorithm Visualizer");
+sf::SoundBuffer buffer;
+sf::Sound beep;
 int rects[100];
 bool sorted;
 
 int main()
 {
+    // If the sound cannot be found in the files
+    // The Viewport closes and the program ends
+    if (!buffer.loadFromFile("beep.wav")) {
+        viewport.close();
+        return 0;
+    }
+    else // If the sound is found
+    {
+        beep.setBuffer(buffer);
+        beep.play();
+    }
+
     // Seeding random to get different numbers each time
     srand(time(NULL));
 
@@ -34,8 +49,12 @@ int main()
         sf::Event e;
         while (viewport.pollEvent(e))
         {
-            // Closes the window
-            if (e.type == sf::Event::Closed) viewport.close();
+            // Closes the window and ends the program
+            if (e.type == sf::Event::Closed)
+            {
+                viewport.close();
+                return 0;
+            }
 
             // Runs insertion sort
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) 
@@ -112,7 +131,8 @@ void shuffle()
 }
 
 // Displays the number bars and changes the colors
-void display(int index) {
+void display(int index)
+{
     viewport.clear();
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
@@ -124,6 +144,14 @@ void display(int index) {
     }
 
     viewport.display();
+}
+
+// Plays the sound that correlates to the bar being interacted with
+void playSound(int index)
+{
+    // Changes the sound's pitch to match the size of the rectangle
+    beep.setPitch(.50f + (float)index / 100.0f);
+    beep.play();
 }
 
 // swaps two elements in the array
@@ -148,10 +176,12 @@ void selectionSort() {
             {
                 minIndex = j;
                 display(j);
+                playSound(j);
             }
         }
 
         display(i);
+        playSound(i);
         swap(&rects[minIndex], &rects[i]);
     }
 }
@@ -171,6 +201,7 @@ void insertionSort()
             rects[j + 1] = rects[j];
             j = j - 1;
             display(j);
+            playSound(j);
         }
 
         rects[j + 1] = key;
@@ -198,12 +229,14 @@ void merge(int p, int q, int r)
         {
             rects[mergeIndex] = leftArr[leftIndex++];
             display(mergeIndex);
+            playSound(mergeIndex);
             mergeIndex++;
         }
         else
         {
             rects[mergeIndex] = rightArr[rightIndex++];
             display(mergeIndex);
+            playSound(mergeIndex);
             mergeIndex++;
         }
     }
@@ -213,6 +246,7 @@ void merge(int p, int q, int r)
     {
         rects[mergeIndex] = leftArr[leftIndex++];
         display(mergeIndex);
+        playSound(mergeIndex);
         mergeIndex++;
     }
 
@@ -221,6 +255,7 @@ void merge(int p, int q, int r)
     {
         rects[mergeIndex] = rightArr[rightIndex++];
         display(mergeIndex);
+        playSound(mergeIndex);
         mergeIndex++;
     }
 }
@@ -260,12 +295,14 @@ int partition(int p, int r)
             display(i);
             swap(&rects[++i], &rects[j]);
             display(i);
+            playSound(i);
         }
     }
 
     display(i);
     swap(&rects[i+1], &rects[r]);
     display(i);
+    playSound(i);
     return i+1;
 }
 
@@ -283,6 +320,7 @@ void heapify(int n, int i)
         display(i);
         swap(&rects[i], &rects[max]);
         display(i);
+        playSound(i);
         heapify(n, max);
     }
 }
@@ -292,19 +330,21 @@ void heapSort(int n)
 {
     for (int i = n / 2 - 1; i >= 0; i--) {
         display(n);
+        playSound(n);
         heapify(n, i);
     }
 
     for (int j = n - 1; j > 0; j--)
     {
         display(j);
+        playSound(j);
         swap(&rects[0], &rects[j]);
         heapify(j, 0);
     }
 }
 
 // Best: O(n), Worst: O(n^2), Average: O(n^2)
-void bubbleSort()
+/*void bubbleSort()
 {
 
-}
+}*/
