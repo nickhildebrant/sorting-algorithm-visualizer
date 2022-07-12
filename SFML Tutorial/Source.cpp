@@ -6,7 +6,7 @@
 
 // Method declarations
 void shuffle();
-void display(int index);
+void display(int index, int delay);
 void swap(int* a, int* b);
 void selectionSort();
 void insertionSort();
@@ -16,7 +16,7 @@ void mergeSort(int start, int end);
 void quickSort(int p, int q);
 void heapify(int n, int i);
 void heapSort(int n);
-//void bubbleSort();
+void bubbleSort();
 
 // Global Variables
 sf::RenderWindow viewport(sf::VideoMode(1200, 600), "Sorting Algorithm Visualizer");
@@ -61,7 +61,7 @@ int main()
             {
                 shuffle();
                 insertionSort();
-                display(0);
+                display(0, 10);
                 sorted = true;
             }
             
@@ -70,7 +70,7 @@ int main()
             {
                 shuffle();
                 mergeSort(0, 99);
-                display(0);
+                display(0, 10);
                 sorted = true;
             }
 
@@ -79,7 +79,7 @@ int main()
             {
                 shuffle();
                 quickSort(0, 99);
-                display(0);
+                display(0, 10);
                 sorted = true;
             }
 
@@ -87,23 +87,23 @@ int main()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
                 shuffle();
                 heapSort(100); 
-                display(0); 
+                display(0, 10);
                 sorted = true;
             }
 
-            // Runs heap sort
+            // Runs selection sort
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5)) {
                 shuffle();
                 selectionSort();
-                display(0);
+                display(0, 10);
                 sorted = true;
             }
 
             // Runs bubble sort
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num6)) {
                 shuffle();
-                selectionSort();
-                display(0);
+                bubbleSort();
+                display(0, 1);
                 sorted = true;
             }
             
@@ -111,7 +111,7 @@ int main()
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) shuffle();        
 
             // Displays current sorted array for debugging
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) display(0);          
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) display(0, 1);
         }
     }
 
@@ -127,14 +127,14 @@ void shuffle()
         rects[i] = (rand() % 500);
     }
 
-    display(0);
+    display(0, 10);
 }
 
 // Displays the number bars and changes the colors
-void display(int index)
+void display(int index, int delay)
 {
     viewport.clear();
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 
     for (int i = 0; i < 100; i++) {
         sf::RectangleShape bar(sf::Vector2f(10, rects[i]));
@@ -175,12 +175,12 @@ void selectionSort() {
             if (rects[j] < rects[minIndex])
             {
                 minIndex = j;
-                display(j);
+                display(j, 10);
                 playSound(j);
             }
         }
 
-        display(i);
+        display(i, 10);
         playSound(i);
         swap(&rects[minIndex], &rects[i]);
     }
@@ -200,7 +200,7 @@ void insertionSort()
         {
             rects[j + 1] = rects[j];
             j = j - 1;
-            display(j);
+            display(j, 10);
             playSound(j);
         }
 
@@ -228,14 +228,14 @@ void merge(int p, int q, int r)
         if (leftArr[leftIndex] <= rightArr[rightIndex])
         {
             rects[mergeIndex] = leftArr[leftIndex++];
-            display(mergeIndex);
+            display(mergeIndex, 10);
             playSound(mergeIndex);
             mergeIndex++;
         }
         else
         {
             rects[mergeIndex] = rightArr[rightIndex++];
-            display(mergeIndex);
+            display(mergeIndex, 10);
             playSound(mergeIndex);
             mergeIndex++;
         }
@@ -245,7 +245,7 @@ void merge(int p, int q, int r)
     while (leftIndex < leftNum)
     {
         rects[mergeIndex] = leftArr[leftIndex++];
-        display(mergeIndex);
+        display(mergeIndex, 10);
         playSound(mergeIndex);
         mergeIndex++;
     }
@@ -254,7 +254,7 @@ void merge(int p, int q, int r)
     while (rightIndex < rightNum)
     {
         rects[mergeIndex] = rightArr[rightIndex++];
-        display(mergeIndex);
+        display(mergeIndex, 10);
         playSound(mergeIndex);
         mergeIndex++;
     }
@@ -292,16 +292,16 @@ int partition(int p, int r)
     {
         if (rects[j] < pivot)
         {
-            display(i);
+            display(i, 10);
             swap(&rects[++i], &rects[j]);
-            display(i);
+            display(i, 10);
             playSound(i);
         }
     }
 
-    display(i);
+    display(i, 10);
     swap(&rects[i+1], &rects[r]);
-    display(i);
+    display(i, 10);
     playSound(i);
     return i+1;
 }
@@ -317,9 +317,9 @@ void heapify(int n, int i)
 
     if (max != i)
     {
-        display(i);
+        display(i, 10);
         swap(&rects[i], &rects[max]);
-        display(i);
+        display(i, 10);
         playSound(i);
         heapify(n, max);
     }
@@ -329,14 +329,14 @@ void heapify(int n, int i)
 void heapSort(int n)
 {
     for (int i = n / 2 - 1; i >= 0; i--) {
-        display(n);
+        display(n, 10);
         playSound(n);
         heapify(n, i);
     }
 
     for (int j = n - 1; j > 0; j--)
     {
-        display(j);
+        display(j, 10);
         playSound(j);
         swap(&rects[0], &rects[j]);
         heapify(j, 0);
@@ -344,7 +344,26 @@ void heapSort(int n)
 }
 
 // Best: O(n), Worst: O(n^2), Average: O(n^2)
-/*void bubbleSort()
+void bubbleSort()
 {
+    int i, j;
+    bool swapped;
 
-}*/
+    for (i = 0; i < 99; i++)
+    {
+        swapped = false;
+        for (j = 0; j < 99 - i; j++)
+        {
+            if (rects[j] > rects[j + 1])
+            {
+                swap(&rects[j], &rects[j + 1]);
+                display(j, 1);
+                playSound(j);
+                swapped = true;
+            }
+        }
+
+        // If not swapped by inner loop 
+        if (!swapped) break;
+    }
+}
